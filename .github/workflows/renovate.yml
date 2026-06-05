@@ -7,15 +7,16 @@ on:
   # run manually
   workflow_dispatch:
 
+permissions:
+  pull-requests: write
+  contents: write
+  issues: write
+  statuses: write
+  actions: write 
+
 jobs:
   renovate:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      contents: write
-      issues: write
-      statuses: write
-      actions: write 
 
     steps:
       - name: Checkout repository
