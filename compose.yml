@@ -7,18 +7,33 @@ services:
       - ./:/workspace
     ports:
       - "8080:8080"
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/8080"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 30s
 
   frontend:
     image: node:24
     working_dir: /workspace/frontend
     command: ["sh", "-c", "corepack enable && pnpm install && pnpm dev --host 0.0.0.0"]
+    environment:
+      VITE_PROXY_API_TARGET: http://backend:8080
     volumes:
       - ./:/workspace
       - frontend_node_modules:/workspace/frontend/node_modules
     ports:
       - "5173:5173"
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/5173"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 30s
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
 
 volumes:
   frontend_node_modules:
