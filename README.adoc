@@ -1,11 +1,12 @@
-= Full-Stack Scaffold: Spring Boot + React
+= Experimental use of WebAuthn
 
 == Prerequisites
 
 * Java 25
+* Gradle 9
 * Node.js 24
 * pnpm (via `corepack enable`)
-* Docker + Docker Compose (optional)
+* Docker + Docker Compose
 
 == Repository structure
 
@@ -22,23 +23,28 @@
 
 From `/tmp/workspace/robertbruckbauer/experiment-webauthn/backend`:
 
-* `./gradlew bootRun`
-* `./gradlew test`
 * `./gradlew build`
+* `./gradlew test`
+* `./gradlew bootRun`
 
-Health/hello endpoint:
+Hello endpoint:
 
 * `GET http://localhost:8080/api/hello`
+
+Health endpoint:
+
+* `GET http://localhost:8080/actuator/health`
 
 == Frontend commands
 
 From `/tmp/workspace/robertbruckbauer/experiment-webauthn/frontend`:
 
 * `pnpm install`
-* `pnpm dev`
-* `pnpm test`
-* `pnpm lint`
 * `pnpm build`
+* `pnpm test`
+* `pnpm test:e2e`
+* `pnpm lint`
+* `pnpm dev`
 
 The Vite dev server proxies `/api` requests to `http://localhost:8080`.
 
