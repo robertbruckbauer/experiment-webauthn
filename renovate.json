@@ -7,8 +7,6 @@
     ":rebaseStalePrs",
     "group:monorepos"
   ],
-  "onboarding": false,
-  "requireConfig": "optional",
   "dependencyDashboard": false,
   "semanticCommits": "enabled",
   "configMigration": true,
