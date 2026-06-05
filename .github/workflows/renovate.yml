@@ -21,10 +21,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up Node.js 24
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: '24'
           cache: npm
@@ -32,26 +32,8 @@ jobs:
             .github/workflows/renovate.yml
             renovate.json
 
-      - name: Validate Renovate configuration
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-
-          config_path = Path("renovate.json")
-          config = json.loads(config_path.read_text())
-          print(f"Loaded {config_path} with {len(config)} top-level entries.")
-          PY
-
-      - name: Show Renovate runtime details
-        run: |
-          echo "Repository: $GITHUB_REPOSITORY"
-          echo "Config file: $RENOVATE_CONFIG_FILE"
-          node --version
-          npm --version
-
       - name: Run Renovate
         uses: renovatebot/github-action@v46
         with:
           configurationFile: renovate.json
-          token: ${{ secrets.RENOVATE_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
