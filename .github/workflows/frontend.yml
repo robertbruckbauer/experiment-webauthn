@@ -50,7 +50,7 @@ jobs:
       - name: Test frontend
         run: |
           set -o pipefail
-          pnpm test --run 2>&1 | tee test.log
+          pnpm test 2>&1 | tee test.log
 
       - name: Build frontend
         run: |
