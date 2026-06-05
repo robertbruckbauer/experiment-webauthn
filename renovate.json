@@ -41,7 +41,7 @@
       "rangeStrategy": "pin"
     },
     {
-      "description": "Group backend Gradle non-major updates",
+      "description": "Group non-major gradle updates",
       "matchManagers": [
         "gradle"
       ],
@@ -54,10 +54,10 @@
         "pin",
         "digest"
       ],
-      "groupName": "backend Gradle dependencies"
+      "groupName": "non-major gradle dependencies"
     },
     {
-      "description": "Group frontend pnpm updates",
+      "description": "Group non-major pnpm updates",
       "matchManagers": [
         "npm"
       ],
@@ -70,10 +70,10 @@
         "pin",
         "digest"
       ],
-      "groupName": "frontend dependencies"
+      "groupName": "non-major npm dependencies"
     },
     {
-      "description": "Group GitHub Actions updates",
+      "description": "Group non-major github actions updates",
       "matchManagers": [
         "github-actions"
       ],
@@ -83,10 +83,10 @@
         "pin",
         "digest"
       ],
-      "groupName": "GitHub Actions"
+      "groupName": "non-major github actions updates"
     },
     {
-      "description": "Group Docker image updates",
+      "description": "Group non-major docker image updates",
       "matchManagers": [
         "docker-compose",
         "dockerfile"
@@ -102,7 +102,7 @@
         "pin",
         "digest"
       ],
-      "groupName": "Docker images"
+      "groupName": "non-major docker image updates"
     }
   ]
 }
