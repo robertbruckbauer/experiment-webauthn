@@ -1,0 +1,108 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:best-practices",
+    ":semanticCommits",
+    ":configMigration",
+    ":rebaseStalePrs",
+    "group:monorepos"
+  ],
+  "onboarding": false,
+  "requireConfig": "optional",
+  "dependencyDashboard": false,
+  "semanticCommits": "enabled",
+  "configMigration": true,
+  "rebaseWhen": "behind-base-branch",
+  "automerge": false,
+  "platformAutomerge": false,
+  "separateMajorMinor": true,
+  "labels": [
+    "dependencies",
+    "renovate"
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true
+  },
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "enabledManagers": [
+    "gradle",
+    "npm",
+    "github-actions",
+    "docker-compose",
+    "dockerfile"
+  ],
+  "packageRules": [
+    {
+      "matchManagers": [
+        "npm"
+      ],
+      "rangeStrategy": "pin"
+    },
+    {
+      "description": "Group non-major gradle updates",
+      "matchManagers": [
+        "gradle"
+      ],
+      "matchFileNames": [
+        "backend/**"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "groupName": "non-major gradle dependencies"
+    },
+    {
+      "description": "Group non-major pnpm updates",
+      "matchManagers": [
+        "npm"
+      ],
+      "matchFileNames": [
+        "frontend/**"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "groupName": "non-major npm dependencies"
+    },
+    {
+      "description": "Group non-major github actions updates",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "groupName": "non-major github actions updates"
+    },
+    {
+      "description": "Group non-major docker image updates",
+      "matchManagers": [
+        "docker-compose",
+        "dockerfile"
+      ],
+      "matchFileNames": [
+        "compose.yml",
+        "**/Dockerfile",
+        "**/Dockerfile.*"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "groupName": "non-major docker image updates"
+    }
+  ]
+}
