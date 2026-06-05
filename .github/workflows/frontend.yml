@@ -1,0 +1,78 @@
+name: Frontend CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontend-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 9
+
+      - name: Set up Node.js 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint frontend
+        run: |
+          set -o pipefail
+          pnpm lint 2>&1 | tee lint.log
+
+      - name: Test frontend
+        run: |
+          set -o pipefail
+          pnpm test 2>&1 | tee test.log
+
+      - name: Build frontend
+        run: |
+          set -o pipefail
+          pnpm build 2>&1 | tee build.log
+
+      - name: Upload frontend test reports (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: frontend-test-reports
+          path: |
+            frontend/build/test-results/**
+            frontend/test.log
+          if-no-files-found: ignore
+
+      - name: Upload frontend build logs (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: frontend-build-logs
+          path: |
+            frontend/lint.log
+            frontend/build.log
+          if-no-files-found: ignore
