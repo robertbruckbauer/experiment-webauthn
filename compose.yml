@@ -17,7 +17,7 @@ services:
       start_period: 30s
 
   backend:
-    image: eclipse-temurin:21-jdk
+    image: eclipse-temurin:25-jdk
     working_dir: /workspace/backend
     command: ["./gradlew", "bootRun"]
     environment:
