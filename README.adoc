@@ -2,7 +2,7 @@
 
 == Prerequisites
 
-* Java 25
+* Java 21
 * Gradle 9
 * Node.js 24
 * pnpm (via `corepack enable`)
@@ -30,6 +30,8 @@ From `/tmp/workspace/robertbruckbauer/experiment-webauthn/backend`:
 Hello endpoint:
 
 * `GET http://localhost:8080/api/hello`
+* Requires a Keycloak access token (refresh tokens are rejected)
+* Validates issuer, signature, expiration and audience (`backend-api`)
 
 Health endpoint:
 
@@ -47,6 +49,20 @@ From `/tmp/workspace/robertbruckbauer/experiment-webauthn/frontend`:
 * `pnpm dev`
 
 The Vite dev server proxies `/api` requests to `http://localhost:8080`.
+The frontend uses `keycloak-js` (Authorization Code + PKCE S256), refreshes tokens, and always calls the backend with the latest access token.
+
+Required frontend env vars:
+
+* `VITE_KEYCLOAK_URL` (e.g. `http://localhost:8081`)
+* `VITE_KEYCLOAK_REALM` (e.g. `webauthn`)
+* `VITE_KEYCLOAK_CLIENT_ID` (e.g. `frontend-spa`)
+
+Required backend env vars:
+
+* `OAUTH2_ISSUER_URI` (e.g. `http://localhost:8081/realms/webauthn`)
+* `OAUTH2_AUDIENCE` (defaults to `backend-api`)
+* `OAUTH2_CLIENT_ID` (defaults to `frontend-spa`)
+* `FRONTEND_ORIGIN` (defaults to `http://localhost:5173`)
 
 == Docker Compose commands
 
@@ -54,6 +70,19 @@ From `/tmp/workspace/robertbruckbauer/experiment-webauthn`:
 
 * `docker compose up`
 * `docker compose down`
+
+Compose starts:
+
+* Keycloak on `http://localhost:8081` with realm import from `keycloak/realm-export.json`
+* Backend on `http://localhost:8080`
+* Frontend on `http://localhost:5173`
+
+Default demo user:
+
+* username: `user`
+* password: `user`
+
+WebAuthn can be configured in the Keycloak admin UI for this realm (`Authentication` / `WebAuthn` policies).
 
 == Running tests
 
