@@ -1,0 +1,20 @@
+services:
+  backend:
+    image: eclipse-temurin:25-jdk
+    working_dir: /workspace/backend
+    command: ["./gradlew", "bootRun"]
+    volumes:
+      - ./:/workspace
+    ports:
+      - "8080:8080"
+
+  frontend:
+    image: node:24
+    working_dir: /workspace/frontend
+    command: ["sh", "-c", "corepack enable && pnpm install && pnpm dev --host 0.0.0.0"]
+    volumes:
+      - ./:/workspace
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
