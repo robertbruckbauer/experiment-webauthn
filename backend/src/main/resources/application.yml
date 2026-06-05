@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: backend
+  jpa:
+    hibernate:
+      ddl-auto: none
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://issuer.example.invalid
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

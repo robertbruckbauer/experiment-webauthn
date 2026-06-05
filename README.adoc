@@ -1,1 +1,67 @@
 = Experimental use of WebAuthn
+
+== Prerequisites
+
+* Java 25
+* Gradle 9
+* Node.js 24
+* pnpm (via `corepack enable`)
+* Docker + Docker Compose
+
+== Repository structure
+
+[source,text]
+----
+.
+├── backend/
+├── frontend/
+├── compose.yml
+└── README.adoc
+----
+
+== Backend commands
+
+From `/tmp/workspace/robertbruckbauer/experiment-webauthn/backend`:
+
+* `./gradlew build`
+* `./gradlew test`
+* `./gradlew bootRun`
+
+Hello endpoint:
+
+* `GET http://localhost:8080/api/hello`
+
+Health endpoint:
+
+* `GET http://localhost:8080/actuator/health`
+
+== Frontend commands
+
+From `/tmp/workspace/robertbruckbauer/experiment-webauthn/frontend`:
+
+* `pnpm install`
+* `pnpm build`
+* `pnpm test`
+* `pnpm test:e2e`
+* `pnpm lint`
+* `pnpm dev`
+
+The Vite dev server proxies `/api` requests to `http://localhost:8080`.
+
+== Docker Compose commands
+
+From `/tmp/workspace/robertbruckbauer/experiment-webauthn`:
+
+* `docker compose up`
+* `docker compose down`
+
+== Running tests
+
+* Backend: `cd backend && ./gradlew test`
+* Frontend unit tests: `cd frontend && pnpm test`
+* Frontend browser tests: `cd frontend && pnpm test:e2e`
+
+== Building production artifacts
+
+* Backend: `cd backend && ./gradlew build`
+* Frontend: `cd frontend && pnpm build`
