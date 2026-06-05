@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ class HelloEndpointSecurityTest {
         mockMvc.perform(get("/api/hello")
                 .with(jwt().jwt(jwt -> jwt
                     .subject("subject-1")
+                    .issuer("http://localhost:8081/realms/webauthn")
+                    .issuedAt(Instant.now())
+                    .expiresAt(Instant.now().plusSeconds(60))
                     .claim("preferred_username", "alice")
                     .claim("typ", "Bearer")
                     .audience(List.of("backend-api")))))

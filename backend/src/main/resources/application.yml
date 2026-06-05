@@ -13,8 +13,7 @@ spring:
 app:
   security:
     cors:
-      allowed-origins:
-        - ${FRONTEND_ORIGIN:http://localhost:5173}
+      allowed-origins: ${FRONTEND_ORIGIN:http://localhost:5173}
     oauth2:
       audience: ${OAUTH2_AUDIENCE:backend-api}
       client-id: ${OAUTH2_CLIENT_ID:frontend-spa}

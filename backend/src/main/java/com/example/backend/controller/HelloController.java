@@ -1,11 +1,11 @@
 package com.example.backend.controller;
 
 import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
 
     @GetMapping("/hello")
-    public Map<String, Object> hello(Authentication authentication, @AuthenticationPrincipal Jwt jwt) {
+    public Map<String, Object> hello(Authentication authentication) {
+        Jwt jwt = (Jwt) authentication.getPrincipal();
         String username = jwt.getClaimAsString("preferred_username");
         if (username == null || username.isBlank()) {
             username = jwt.getSubject();
@@ -26,14 +27,14 @@ public class HelloController {
             .map(GrantedAuthority::getAuthority)
             .toList();
 
-        return Map.of(
-            "message", "Hello, " + username + "!",
-            "subject", jwt.getSubject(),
-            "issuer", jwt.getIssuer().toString(),
-            "audience", jwt.getAudience(),
-            "expiresAt", jwt.getExpiresAt(),
-            "tokenType", jwt.getClaimAsString("typ"),
-            "authorities", authorities
-        );
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("message", "Hello, " + username + "!");
+        response.put("subject", jwt.getSubject());
+        response.put("issuer", jwt.getIssuer() != null ? jwt.getIssuer().toString() : null);
+        response.put("audience", jwt.getAudience());
+        response.put("expiresAt", jwt.getExpiresAt());
+        response.put("tokenType", jwt.getClaimAsString("typ"));
+        response.put("authorities", authorities);
+        return response;
     }
 }

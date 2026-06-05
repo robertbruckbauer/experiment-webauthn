@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 class HelloControllerTest {
 
@@ -26,13 +26,13 @@ class HelloControllerTest {
             .expiresAt(Instant.now().plusSeconds(300))
             .build();
 
-        TestingAuthenticationToken authentication = new TestingAuthenticationToken(
-            "alice",
-            "n/a",
-            new SimpleGrantedAuthority("ROLE_user")
+        JwtAuthenticationToken authentication = new JwtAuthenticationToken(
+            jwt,
+            List.of(new SimpleGrantedAuthority("ROLE_user")),
+            "alice"
         );
 
-        assertThat(controller.hello(authentication, jwt))
+        assertThat(controller.hello(authentication))
             .containsEntry("message", "Hello, alice!")
             .containsEntry("subject", "user-123")
             .containsEntry("tokenType", "Bearer");

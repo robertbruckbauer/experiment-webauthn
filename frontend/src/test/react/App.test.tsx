@@ -30,7 +30,7 @@ describe('App', () => {
     await waitFor(() => {
       expect(helloLoader).toHaveBeenCalledWith('token')
     })
-    expect(screen.getByText(/Hello, alice!/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/Hello, alice!/i)).toHaveLength(2)
     expect(screen.getByText(/preferred_username/)).toBeInTheDocument()
   })
 })
