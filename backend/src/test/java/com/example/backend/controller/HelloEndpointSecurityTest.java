@@ -35,10 +35,15 @@ class HelloEndpointSecurityTest {
                     .issuedAt(Instant.now())
                     .expiresAt(Instant.now().plusSeconds(60))
                     .claim("preferred_username", "alice")
+                    .claim("email", "alice@example.com")
+                    .claim("scope", "profile email")
                     .claim("typ", "Bearer")
                     .audience(List.of("backend-api")))))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.message").value("Hello, alice!"))
+            .andExpect(jsonPath("$.preferredUsername").value("alice"))
+            .andExpect(jsonPath("$.email").value("alice@example.com"))
+            .andExpect(jsonPath("$.scopes[0]").value("profile"))
             .andExpect(jsonPath("$.tokenType").value("Bearer"));
     }
 }

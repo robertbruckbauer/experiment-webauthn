@@ -10,6 +10,7 @@ export type AuthClient = {
   init: () => Promise<void>
   isAuthenticated: () => boolean
   login: () => Promise<void>
+  enrollPasskey: () => Promise<void>
   logout: () => Promise<void>
   refresh: (minValiditySeconds: number) => Promise<void>
   getAccessToken: () => string | undefined
@@ -44,6 +45,12 @@ export function createKeycloakAuthClient(): AuthClient {
     login: async () => {
       await keycloak.login({
         redirectUri: window.location.href,
+      })
+    },
+    enrollPasskey: async () => {
+      await keycloak.login({
+        redirectUri: window.location.href,
+        action: 'webauthn-register-passwordless',
       })
     },
     logout: async () => {

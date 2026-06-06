@@ -12,6 +12,7 @@ describe('App', () => {
       init: vi.fn(async () => {}),
       isAuthenticated: vi.fn(() => true),
       login: vi.fn(async () => {}),
+      enrollPasskey: vi.fn(async () => {}),
       logout: vi.fn(async () => {}),
       refresh: vi.fn(async () => {}),
       getAccessToken: vi.fn(() => 'token'),
@@ -24,6 +25,8 @@ describe('App', () => {
       audience: ['backend-api'],
       expiresAt: '2026-01-01T00:00:00Z',
       tokenType: 'Bearer',
+      roles: ['ROLE_user'],
+      scopes: ['profile', 'email'],
       authorities: ['ROLE_user'],
     }))
 
@@ -38,38 +41,28 @@ describe('App', () => {
     expect(screen.getByText(/preferred_username/)).toBeInTheDocument()
   })
 
-  it('registers and authenticates with passkey actions', async () => {
+  it('exposes login and passkey enrollment actions through keycloak-js', async () => {
     const authClient = {
       init: vi.fn(async () => {}),
-      isAuthenticated: vi.fn(() => true),
+      isAuthenticated: vi.fn(() => false),
       login: vi.fn(async () => {}),
+      enrollPasskey: vi.fn(async () => {}),
       logout: vi.fn(async () => {}),
       refresh: vi.fn(async () => {}),
       getAccessToken: vi.fn(() => 'token'),
       getParsedToken: vi.fn(() => ({ preferred_username: 'alice', sub: 'subject-1' })),
     }
-    const helloLoader = vi.fn(async () => ({
-      message: 'Hello, alice!',
-      subject: 'subject-1',
-      issuer: 'http://localhost:8081/realms/webauthn',
-      audience: ['backend-api'],
-      expiresAt: '2026-01-01T00:00:00Z',
-      tokenType: 'Bearer',
-      authorities: ['ROLE_user'],
-    }))
-    const passkeyClient = {
-      register: vi.fn(async () => ({ id: 'credential-123', type: 'public-key', clientDataJSON: 'abc' })),
-      authenticate: vi.fn(async () => ({ id: 'credential-123', type: 'public-key', clientDataJSON: 'def' })),
-    }
+    const helloLoader = vi.fn()
 
-    render(<App authClient={authClient} helloLoader={helloLoader} passkeyClient={passkeyClient} />)
+    render(<App authClient={authClient} helloLoader={helloLoader} />)
 
-    fireEvent.click(screen.getByRole('button', { name: /register → create a new passkey/i }))
-    await screen.findByText(/Registered passkey: credential-123/i)
-    expect(passkeyClient.register).toHaveBeenCalledWith('alice')
+    await screen.findByText(/Not logged in/i)
+    expect(helloLoader).not.toHaveBeenCalled()
 
-    fireEvent.click(screen.getByRole('button', { name: /authenticate → use that passkey to log in/i }))
-    await screen.findByText(/Authenticated with passkey: credential-123/i)
-    expect(passkeyClient.authenticate).toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: /login with keycloak/i }))
+    expect(authClient.login).toHaveBeenCalled()
+
+    fireEvent.click(screen.getByRole('button', { name: /register passkey in keycloak/i }))
+    expect(authClient.enrollPasskey).toHaveBeenCalled()
   })
 })

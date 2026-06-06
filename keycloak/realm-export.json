@@ -6,8 +6,35 @@
   "duplicateEmailsAllowed": false,
   "resetPasswordAllowed": true,
   "bruteForceProtected": true,
+  "browserFlow": "browser",
   "webAuthnPolicyRpEntityName": "experiment-webauthn",
+  "webAuthnPolicyRpId": "localhost",
+  "webAuthnPolicySignatureAlgorithms": [
+    "ES256",
+    "RS256"
+  ],
+  "webAuthnPolicyAttestationConveyancePreference": "none",
+  "webAuthnPolicyAuthenticatorAttachment": "not specified",
+  "webAuthnPolicyRequireResidentKey": "No",
+  "webAuthnPolicyUserVerificationRequirement": "required",
+  "webAuthnPolicyAcceptableAaguids": [],
+  "webAuthnPolicyExtraOrigins": [
+    "http://localhost:5173"
+  ],
   "webAuthnPolicyPasswordlessRpEntityName": "experiment-webauthn",
+  "webAuthnPolicyPasswordlessRpId": "localhost",
+  "webAuthnPolicyPasswordlessSignatureAlgorithms": [
+    "ES256",
+    "RS256"
+  ],
+  "webAuthnPolicyPasswordlessAttestationConveyancePreference": "none",
+  "webAuthnPolicyPasswordlessAuthenticatorAttachment": "not specified",
+  "webAuthnPolicyPasswordlessRequireResidentKey": "Yes",
+  "webAuthnPolicyPasswordlessUserVerificationRequirement": "required",
+  "webAuthnPolicyPasswordlessAcceptableAaguids": [],
+  "webAuthnPolicyPasswordlessExtraOrigins": [
+    "http://localhost:5173"
+  ],
   "clients": [
     {
       "clientId": "frontend-spa",
@@ -74,6 +101,24 @@
       }
     ]
   },
+  "requiredActions": [
+    {
+      "alias": "webauthn-register",
+      "name": "WebAuthn Register",
+      "providerId": "webauthn-register",
+      "enabled": true,
+      "defaultAction": false,
+      "priority": 30
+    },
+    {
+      "alias": "webauthn-register-passwordless",
+      "name": "WebAuthn Register Passwordless",
+      "providerId": "webauthn-register-passwordless",
+      "enabled": true,
+      "defaultAction": false,
+      "priority": 31
+    }
+  ],
   "users": [
     {
       "username": "user",

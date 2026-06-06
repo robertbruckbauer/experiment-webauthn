@@ -50,6 +50,7 @@ From `/tmp/workspace/robertbruckbauer/experiment-webauthn/frontend`:
 
 The Vite dev server proxies `/api` requests to `http://localhost:8080`.
 The frontend uses `keycloak-js` (Authorization Code + PKCE S256), refreshes tokens, and always calls the backend with the latest access token.
+WebAuthn/passkey registration and verification are handled by Keycloak only.
 
 Required frontend env vars:
 
@@ -63,6 +64,39 @@ Required backend env vars:
 * `OAUTH2_AUDIENCE` (defaults to `backend-api`)
 * `OAUTH2_CLIENT_ID` (defaults to `frontend-spa`)
 * `FRONTEND_ORIGIN` (defaults to `http://localhost:5173`)
+
+== Keycloak passkey architecture
+
+* React only uses `keycloak-js` (`keycloak.login()` and Keycloak enrollment redirect).
+* React does not call browser WebAuthn APIs directly (`navigator.credentials.create/get` are not used).
+* Keycloak owns challenge generation, credential storage, registration, and verification.
+* Spring Boot is OAuth2 Resource Server only (JWT validation + business APIs).
+
+== Keycloak realm/client/passkey setup
+
+The included import (`keycloak/realm-export.json`) provides a baseline realm/client setup:
+
+* Realm: `webauthn`
+* SPA client: `frontend-spa` (public, standard flow, PKCE S256, redirect URI/web origin for `http://localhost:5173`)
+* API audience mapper: `backend-api-audience`
+* WebAuthn passwordless policy fields (RP entity name/RP ID/origin aligned to local setup)
+* Required action providers for WebAuthn registration
+
+In Keycloak Admin UI, configure:
+
+1. `Realm settings -> Authentication -> WebAuthn Passwordless Policy`
+   * RP ID: `localhost`
+   * Origin: `http://localhost:5173`
+   * User verification: `required`
+   * Attestation conveyance: `none`
+   * Resident key / discoverable credential: `Yes`
+2. `Authentication -> Flows`
+   * Create/adjust browser flow to include **WebAuthn Passwordless Authenticator**
+3. `Authentication -> Required actions`
+   * Enable **WebAuthn Register Passwordless**
+4. Assign required action to users (or allow enrollment from account console).
+
+Passkey enrollment from React is done via Keycloak redirect (required action), not custom backend/frontend WebAuthn endpoints.
 
 == Docker Compose commands
 
@@ -82,7 +116,10 @@ Default demo user:
 * username: `user`
 * password: `user`
 
-WebAuthn can be configured in the Keycloak admin UI for this realm (`Authentication` / `WebAuthn` policies).
+Use the UI buttons:
+
+* **Login with Keycloak**: starts OIDC login.
+* **Register passkey in Keycloak**: redirects to Keycloak passkey enrollment required action.
 
 == Running tests
 

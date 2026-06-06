@@ -1,10 +1,14 @@
 export type HelloResponse = {
   message: string
   subject: string
+  preferredUsername?: string
+  email?: string
   issuer: string
   audience: string[]
   expiresAt: string
   tokenType: string
+  roles: string[]
+  scopes: string[]
   authorities: string[]
 }
 

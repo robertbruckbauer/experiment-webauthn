@@ -19,6 +19,8 @@ class HelloControllerTest {
             .subject("user-123")
             .header("alg", "RS256")
             .claim("preferred_username", "alice")
+            .claim("email", "alice@example.com")
+            .claim("scope", "profile email")
             .claim("typ", "Bearer")
             .audience(List.of("backend-api"))
             .issuer("http://localhost:8081/realms/webauthn")
@@ -35,6 +37,10 @@ class HelloControllerTest {
         assertThat(controller.hello(authentication))
             .containsEntry("message", "Hello, alice!")
             .containsEntry("subject", "user-123")
+            .containsEntry("preferredUsername", "alice")
+            .containsEntry("email", "alice@example.com")
+            .containsEntry("roles", List.of("ROLE_user"))
+            .containsEntry("scopes", List.of("profile", "email"))
             .containsEntry("tokenType", "Bearer");
     }
 }
