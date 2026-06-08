@@ -8,7 +8,15 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://issuer.example.invalid
+          issuer-uri: ${OAUTH2_ISSUER_URI:http://localhost:8081/realms/webauthn}
+
+app:
+  security:
+    cors:
+      allowed-origins: ${FRONTEND_ORIGIN:http://localhost:5173}
+    oauth2:
+      audience: ${OAUTH2_AUDIENCE:backend-api}
+      client-id: ${OAUTH2_CLIENT_ID:frontend-spa}
 
 management:
   endpoints:
