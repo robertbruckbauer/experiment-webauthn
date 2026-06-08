@@ -13,6 +13,8 @@ export function App({
   helloLoader = getHello,
 }: AppProps) {
   const [backendMessage, setBackendMessage] = useState('Loading...')
+  const [loginState, setLoginState] = useState<'logged-in' | 'logged-out'>('logged-out')
+  const [email, setEmail] = useState('')
   const [jwtClaims, setJwtClaims] = useState<ParsedToken>()
   const [apiResponse, setApiResponse] = useState<HelloResponse>()
   const [error, setError] = useState<string>()
@@ -25,6 +27,9 @@ export function App({
         await authClient.init()
         if (!authClient.isAuthenticated()) {
           if (!stopped) {
+            setLoginState('logged-out')
+            setJwtClaims(undefined)
+            setApiResponse(undefined)
             setBackendMessage('Not logged in. Use Keycloak login to continue.')
           }
           return
@@ -38,6 +43,7 @@ export function App({
 
         const response = await helloLoader(accessToken)
         if (!stopped) {
+          setLoginState('logged-in')
           setBackendMessage(response.message)
           setApiResponse(response)
           setJwtClaims(authClient.getParsedToken())
@@ -45,6 +51,7 @@ export function App({
         }
       } catch (caughtError) {
         if (!stopped) {
+          setLoginState('logged-out')
           setError(caughtError instanceof Error ? caughtError.message : 'Authentication failed')
           setBackendMessage('Hello World')
         }
@@ -64,26 +71,74 @@ export function App({
     }
   }, [authClient, helloLoader])
 
+  const normalizedEmail = email.trim()
+
   const login = async () => {
-    await authClient.login()
+    try {
+      await authClient.login(normalizedEmail)
+    } catch (caughtError) {
+      setError(caughtError instanceof Error ? caughtError.message : 'Login failed')
+    }
   }
 
   const enrollPasskey = async () => {
-    await authClient.enrollPasskey()
+    try {
+      await authClient.enrollPasskey(normalizedEmail)
+    } catch (caughtError) {
+      setError(caughtError instanceof Error ? caughtError.message : 'Passkey registration failed')
+    }
+  }
+
+  const logout = async () => {
+    try {
+      await authClient.logout()
+      setLoginState('logged-out')
+      setJwtClaims(undefined)
+      setApiResponse(undefined)
+      setBackendMessage('Not logged in. Use Keycloak login to continue.')
+    } catch (caughtError) {
+      setError(caughtError instanceof Error ? caughtError.message : 'Logout failed')
+    }
   }
 
   return (
     <main>
       <h1>Hello World</h1>
+      <p>
+        Login state: <strong>{loginState === 'logged-in' ? 'Logged in' : 'Logged out'}</strong>
+      </p>
       <p>{backendMessage}</p>
       <section>
-        <button type="button" onClick={() => void login()}>
+        <label htmlFor="email">E-mail</label>
+        <input
+          id="email"
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          placeholder="user@example.com"
+        />
+        <button type="button" onClick={() => void login()} disabled={!normalizedEmail}>
           Login with Keycloak
         </button>
-        <button type="button" onClick={() => void enrollPasskey()}>
-          Register passkey in Keycloak
+        <button type="button" onClick={() => void enrollPasskey()} disabled={!normalizedEmail}>
+          Register with e-mail + passkey
+        </button>
+        <button type="button" onClick={() => void logout()} disabled={loginState !== 'logged-in'}>
+          Logout and remove passkey
         </button>
       </section>
+      {loginState === 'logged-in' && apiResponse ? (
+        <section>
+          <h2>Credentials</h2>
+          <ul>
+            <li>Subject: {apiResponse.subject}</li>
+            <li>Preferred username: {apiResponse.preferredUsername ?? jwtClaims?.preferred_username ?? 'n/a'}</li>
+            <li>E-mail: {apiResponse.email ?? jwtClaims?.email ?? 'n/a'}</li>
+            <li>Roles: {apiResponse.roles.join(', ') || 'none'}</li>
+            <li>Scopes: {apiResponse.scopes.join(', ') || 'none'}</li>
+          </ul>
+        </section>
+      ) : null}
       {error ? <p>{error}</p> : null}
       {jwtClaims ? <pre>{JSON.stringify(jwtClaims, null, 2)}</pre> : null}
       {apiResponse ? <pre>{JSON.stringify(apiResponse, null, 2)}</pre> : null}

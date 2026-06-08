@@ -71,6 +71,7 @@ Required backend env vars:
 * React does not call browser WebAuthn APIs directly (`navigator.credentials.create/get` are not used).
 * Keycloak owns challenge generation, credential storage, registration, and verification.
 * Spring Boot is OAuth2 Resource Server only (JWT validation + business APIs).
+* The SPA is e-mail-first: user enters e-mail, then registers passkey or logs in with that e-mail hint.
 
 == Keycloak realm/client/passkey setup
 
@@ -81,6 +82,7 @@ The included import (`keycloak/realm-export.json`) provides a baseline realm/cli
 * API audience mapper: `backend-api-audience`
 * WebAuthn passwordless policy fields (RP entity name/RP ID/origin aligned to local setup)
 * Required action providers for WebAuthn registration
+* Realm registration configured to use e-mail as username
 
 In Keycloak Admin UI, configure:
 
@@ -118,8 +120,11 @@ Default demo user:
 
 Use the UI buttons:
 
-* **Login with Keycloak**: starts OIDC login.
-* **Register passkey in Keycloak**: redirects to Keycloak passkey enrollment required action.
+* Enter e-mail first.
+* **Register with e-mail + passkey**: starts Keycloak registration/enrollment flow with `webauthn-register-passwordless`.
+* **Login with Keycloak**: starts login using the entered e-mail as login hint.
+* **Logout and remove passkey**: removes `webauthn` / `webauthn-passwordless` credentials via Keycloak account API, then logs out.
+* Home page shows login state and credential details (subject, preferred username, e-mail, roles, scopes) while logged in.
 
 == Running tests
 

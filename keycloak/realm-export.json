@@ -1,7 +1,9 @@
 {
   "realm": "webauthn",
   "enabled": true,
-  "registrationAllowed": false,
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": true,
+  "editUsernameAllowed": false,
   "loginWithEmailAllowed": true,
   "duplicateEmailsAllowed": false,
   "resetPasswordAllowed": true,
