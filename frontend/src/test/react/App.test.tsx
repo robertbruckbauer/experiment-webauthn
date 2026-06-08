@@ -72,19 +72,19 @@ describe('App', () => {
     await screen.findByText(/Not logged in/i)
     expect(helloLoader).not.toHaveBeenCalled()
 
-    const loginButton = screen.getByRole('button', { name: /login with keycloak/i })
-    const registerButton = screen.getByRole('button', { name: /register with e-mail \+ passkey/i })
+    const loginButton = screen.getByRole('button', { name: /authenticate/i })
+    const registerButton = screen.getByRole('button', { name: /register/i })
     expect(loginButton).toBeDisabled()
     expect(registerButton).toBeDisabled()
 
-    fireEvent.change(screen.getByLabelText(/e-mail/i), { target: { value: 'alice@example.com' } })
+    fireEvent.change(screen.getByLabelText(/e-mail address/i), { target: { value: 'alice@example.com' } })
     expect(loginButton).not.toBeDisabled()
     expect(registerButton).not.toBeDisabled()
 
-    fireEvent.click(screen.getByRole('button', { name: /login with keycloak/i }))
+    fireEvent.click(screen.getByRole('button', { name: /authenticate/i }))
     expect(authClient.login).toHaveBeenCalledWith('alice@example.com')
 
-    fireEvent.click(screen.getByRole('button', { name: /register with e-mail \+ passkey/i }))
+    fireEvent.click(screen.getByRole('button', { name: /register/i }))
     expect(authClient.enrollPasskey).toHaveBeenCalledWith('alice@example.com')
     expect(screen.getByText(/Login state:/i)).toHaveTextContent(/Logged out/i)
     expect(screen.getByRole('button', { name: /logout and remove passkey/i })).toBeDisabled()

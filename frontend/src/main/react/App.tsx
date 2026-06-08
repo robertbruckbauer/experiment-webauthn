@@ -73,11 +73,11 @@ export function App({
 
   const normalizedEmail = email.trim()
 
-  const login = async () => {
+  const authenticate = async () => {
     try {
       await authClient.login(normalizedEmail)
     } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : 'Login failed')
+      setError(caughtError instanceof Error ? caughtError.message : 'Authentication failed')
     }
   }
 
@@ -109,19 +109,20 @@ export function App({
       </p>
       <p>{backendMessage}</p>
       <section>
-        <label htmlFor="email">E-mail</label>
+        <label htmlFor="input-email">E-mail address</label>
         <input
-          id="email"
+          id="input-email"
           type="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          placeholder="user@example.com"
+          placeholder="example_username"
+          autoComplete="username webauthn"
         />
-        <button type="button" onClick={() => void login()} disabled={!normalizedEmail}>
-          Login with Keycloak
+        <button id="register-button" type="button" onClick={() => void enrollPasskey()} disabled={!normalizedEmail}>
+          Register
         </button>
-        <button type="button" onClick={() => void enrollPasskey()} disabled={!normalizedEmail}>
-          Register with e-mail + passkey
+        <button id="login-button" type="button" onClick={() => void authenticate()} disabled={!normalizedEmail}>
+          Authenticate
         </button>
         <button type="button" onClick={() => void logout()} disabled={loginState !== 'logged-in'}>
           Logout and remove passkey
